@@ -6,6 +6,10 @@
 </head>
 <body>
   <h2>Update CSS Variables with <span class='hl'>JS</span></h2>
+  <!-- because the variable is specified lower down here,
+  and inside of it the class "hl" is referencing the variable, the specific one here wins out (like css cascade) -->
+  <h2 style="--base:purple">This will be independent of the color <span class='hl'>JS</span></h2>
+
 
   <div class="controls">
     <label for="spacing">Spacing:</label>
@@ -21,6 +25,23 @@
   <img src="https://source.unsplash.com/7bwQXzbF6KE/800x500">
 
   <style>
+    /* css variable stuff */
+
+    :root{
+      --base: #ffc600;
+      --spacing: 10px;
+      --blur: 10px;
+    }
+
+    img {
+      padding: var(--spacing);
+      background: var(--base);
+      filter: blur(var(--blur))
+    }
+
+    .hl {
+      color: var(--base)
+    }
 
     /*
       misc styles, nothing to do with CSS variables
@@ -45,6 +66,22 @@
   </style>
 
   <script>
+
+    // querySelectorAll returns a nodeList
+    // recently has forEach method added to nodeList
+    const inputs = document.querySelectorAll(".controls input")
+    
+    function handleUpdate() {
+      // to add the 'px' to the necessary ones
+      // dataset is an object with all the properties that start with "data-"
+      const suffix = this.dataset.sizing || '';
+      console.log(this.name)
+      document.documentElement.style.setProperty(`--${this.name}`, this.value + suffix)
+    }
+
+    inputs.forEach(input => input.addEventListener("change", handleUpdate))
+    // to change while moving, not just when let go
+    inputs.forEach(input => input.addEventListener("mousemove", handleUpdate))
   </script>
 
 </body>
